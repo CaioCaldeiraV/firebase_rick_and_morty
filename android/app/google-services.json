@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1034526543793",
+    "project_id": "fir-test-rick-and-morty",
+    "storage_bucket": "fir-test-rick-and-morty.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1034526543793:android:e765c20745732385963790",
+        "android_client_info": {
+          "package_name": "com.caio_caldeira.firebase_rick_and_morty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1034526543793-fb08cn5flvtqurck34j2jn6d7hmbnlqb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIgJaxRzs1yz0WuHuD2eV6G0XJnAHEApQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1034526543793-fb08cn5flvtqurck34j2jn6d7hmbnlqb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
