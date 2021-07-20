@@ -1,8 +1,14 @@
+import 'dart:convert';
+
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
-const String _ShowMainBanner = "show_main_pop_up";
+const String _ShowMainBanner = "show_pop_up";
 final defaults = <String, dynamic>{
-  _ShowMainBanner: {'activate': false}
+  "title": "",
+  "body": "",
+  "activate": false,
+  "urlImage": "",
+  "urlLink": ""
 };
 
 class RemoteConfigService {
@@ -20,7 +26,7 @@ class RemoteConfigService {
           minimumFetchInterval: Duration(hours: 1),
         ),
       );
-      await remoteConfig.setDefaults(defaults);
+      await remoteConfig.setDefaults({_ShowMainBanner: json.encode(defaults)});
       await remoteConfig.fetchAndActivate();
     } catch (exception) {
       print('Unable to fetch remote config. Cached or default values will be '

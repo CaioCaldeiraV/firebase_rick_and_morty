@@ -1,4 +1,3 @@
-import 'package:firebase_rick_and_morty/controller/favorite_controller.dart';
 import 'package:firebase_rick_and_morty/model/character_model.dart';
 import 'package:firebase_rick_and_morty/services/analytics_firebase_service.dart';
 import 'package:flutter/material.dart';
@@ -14,12 +13,9 @@ class DetailView extends StatefulWidget {
 }
 
 class _DetailViewState extends State<DetailView> {
-  FavoriteController _favoriteController = FavoriteController();
-
   @override
   void initState() {
     AnalyticsService.instance.logSelectedCharacter(widget.model);
-    _favoriteController.isCharacterfavorite(widget.model.id!);
     super.initState();
   }
 
@@ -33,71 +29,10 @@ class _DetailViewState extends State<DetailView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Stack(
-              children: [
-                Image.network(
-                  widget.model.image ??
-                      "https://rickandmortyapi.com/api/character/19",
-                  scale: 0.1,
-                ),
-                StreamBuilder<bool>(
-                  stream: _favoriteController.streamIsFavorite.stream,
-                  builder: (context, snapshot) {
-                    if (!snapshot.hasData) {
-                      return Positioned(
-                        bottom: 10,
-                        right: 10,
-                        child: Container(
-                          height: 30,
-                          width: 30,
-                          child: Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                        ),
-                      );
-                    } else {
-                      return Positioned(
-                        bottom: 10,
-                        right: 10,
-                        child: GestureDetector(
-                          onTap: () {
-                            _favoriteController.setFavoriteCharacter(true);
-                          },
-                          child: Container(
-                            height: 60,
-                            width: 60,
-                            child: Stack(
-                              alignment: Alignment.bottomRight,
-                              children: [
-                                Positioned(
-                                  bottom: 0,
-                                  right: 0,
-                                  child: Icon(
-                                    Icons.favorite,
-                                    size: 60,
-                                    color: Theme.of(context).backgroundColor,
-                                  ),
-                                ),
-                                Positioned(
-                                  bottom: 5,
-                                  right: 5,
-                                  child: Icon(
-                                    Icons.favorite,
-                                    size: 50,
-                                    color: snapshot.data!
-                                        ? ColorScheme.dark().secondaryVariant
-                                        : Theme.of(context).backgroundColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                  },
-                ),
-              ],
+            Image.network(
+              widget.model.image ??
+                  "https://rickandmortyapi.com/api/character/19",
+              scale: 0.1,
             ),
             Container(
               height: MediaQuery.of(context).size.height -
