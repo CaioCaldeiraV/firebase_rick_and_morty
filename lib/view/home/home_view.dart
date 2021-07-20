@@ -1,23 +1,128 @@
 import 'package:firebase_rick_and_morty/controller/home_controller.dart';
 import 'package:firebase_rick_and_morty/model/character_model.dart';
+import 'package:firebase_rick_and_morty/model/pop_up_model.dart';
 import 'package:firebase_rick_and_morty/services/analytics_firebase_service.dart';
-import 'package:firebase_rick_and_morty/view/detail/detail_view.dart';
+import 'package:firebase_rick_and_morty/view/favorite/favorite_view.dart';
+import 'package:firebase_rick_and_morty/view/common_widgets/list_tile_character_widget.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+class HomeView extends StatefulWidget {
+  const HomeView({Key? key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomeViewState createState() => _HomeViewState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeViewState extends State<HomeView> {
   HomeController controller = HomeController();
   int page = 1;
 
   @override
   void initState() {
+    verifyPopUP();
     super.initState();
+  }
+
+  void verifyPopUP() async {
+    PopUpModel _popUpModel = await controller.getInfoPopUP();
+    if (_popUpModel.activate ?? false) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return Stack(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.transparent,
+                child: Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.9,
+                    height: MediaQuery.of(context).size.height * 0.6,
+                    child: Card(
+                      color: Colors.white,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Image.network(
+                            "https://posto.clubpetro.com.br/projeto/clube-petro/arquivos/posto/postoscacique/arquivos/c650de1776d016e187e2b98f804ba169.png",
+                            width: double.infinity,
+                            loadingBuilder: (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return Container(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.3,
+                                width: MediaQuery.of(context).size.width * 0.9,
+                                child: Center(
+                                  child: CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
+                                            loadingProgress.expectedTotalBytes!
+                                        : null,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                          Text(
+                            _popUpModel.title ?? "",
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            _popUpModel.body ?? "",
+                            style: TextStyle(
+                              color: Colors.black,
+                            ),
+                          ),
+                          Container(
+                            width: double.infinity,
+                            height: MediaQuery.of(context).size.height * 0.075,
+                            child: ElevatedButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              style: ButtonStyle(
+                                backgroundColor: MaterialStateProperty.all(
+                                    ColorScheme.dark().secondaryVariant),
+                                padding:
+                                    MaterialStateProperty.all(EdgeInsets.zero),
+                              ),
+                              child: Text("Ir a loja"),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                right: MediaQuery.of(context).size.width * 0.05 + 15,
+                top: MediaQuery.of(context).size.height * 0.2 - 40,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: CircleAvatar(
+                    backgroundColor: Colors.red,
+                    radius: 25,
+                    child: Icon(
+                      Icons.close,
+                      size: 35,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+    }
   }
 
   @override
@@ -120,30 +225,53 @@ class _HomePageState extends State<HomePage> {
                 },
                 itemCount: snapshot.data!.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    leading: Container(
-                      child: Image.network(snapshot.data![index].image!),
-                    ),
-                    title: Text(snapshot.data![index].name!),
-                    subtitle: Text(snapshot.data![index].species!),
-                    trailing: TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => DetailView(
-                              model: snapshot.data![index],
-                            ),
-                            settings: RouteSettings(name: "DetailView"),
+                  if (index + 1 == snapshot.data!.length) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ListTileCharacterWidget(model: snapshot.data![index]),
+                        Container(
+                          height: 70,
+                          padding: EdgeInsets.symmetric(horizontal: 20),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Text(
+                                "Created by: Caio Caldeira",
+                                style: TextStyle(
+                                  color: Theme.of(context).backgroundColor,
+                                ),
+                              ),
+                              Text(
+                                "Objective: Test Firebase Features",
+                                style: TextStyle(
+                                  color: Theme.of(context).backgroundColor,
+                                ),
+                              ),
+                            ],
                           ),
-                        );
-                      },
-                      child: Text("Detalhes"),
-                    ),
-                  );
+                        ),
+                      ],
+                    );
+                  } else {
+                    return ListTileCharacterWidget(
+                        model: snapshot.data![index]);
+                  }
                 });
             return list;
           }
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => FavoriteView(),
+            ),
+          );
+        },
+        child: Icon(Icons.favorite),
       ),
     );
   }

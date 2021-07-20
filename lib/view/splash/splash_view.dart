@@ -24,7 +24,7 @@ class _SplashViewState extends State<SplashView> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(),
+          builder: (context) => HomeView(),
           settings: RouteSettings(name: "HomeView"),
         ),
       );

@@ -1,7 +1,6 @@
 import 'package:firebase_rick_and_morty/view/splash/splash_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-
 import 'services/analytics_firebase_service.dart';
 
 void main() {

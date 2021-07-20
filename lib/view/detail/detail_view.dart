@@ -1,6 +1,9 @@
+import 'package:firebase_rick_and_morty/controller/favorite_controller.dart';
 import 'package:firebase_rick_and_morty/model/character_model.dart';
 import 'package:firebase_rick_and_morty/services/analytics_firebase_service.dart';
 import 'package:flutter/material.dart';
+
+import 'widgets/text_characteristics_widget.dart';
 
 class DetailView extends StatefulWidget {
   final CharacterModel model;
@@ -11,9 +14,12 @@ class DetailView extends StatefulWidget {
 }
 
 class _DetailViewState extends State<DetailView> {
+  FavoriteController _favoriteController = FavoriteController();
+
   @override
   void initState() {
     AnalyticsService.instance.logSelectedCharacter(widget.model);
+    _favoriteController.isCharacterfavorite(widget.model.id!);
     super.initState();
   }
 
@@ -27,9 +33,71 @@ class _DetailViewState extends State<DetailView> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Image.network(
-              widget.model.image ?? "",
-              scale: 0.1,
+            Stack(
+              children: [
+                Image.network(
+                  widget.model.image ??
+                      "https://rickandmortyapi.com/api/character/19",
+                  scale: 0.1,
+                ),
+                StreamBuilder<bool>(
+                  stream: _favoriteController.streamIsFavorite.stream,
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) {
+                      return Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: Container(
+                          height: 30,
+                          width: 30,
+                          child: Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        ),
+                      );
+                    } else {
+                      return Positioned(
+                        bottom: 10,
+                        right: 10,
+                        child: GestureDetector(
+                          onTap: () {
+                            _favoriteController.setFavoriteCharacter(true);
+                          },
+                          child: Container(
+                            height: 60,
+                            width: 60,
+                            child: Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                Positioned(
+                                  bottom: 0,
+                                  right: 0,
+                                  child: Icon(
+                                    Icons.favorite,
+                                    size: 60,
+                                    color: Theme.of(context).backgroundColor,
+                                  ),
+                                ),
+                                Positioned(
+                                  bottom: 5,
+                                  right: 5,
+                                  child: Icon(
+                                    Icons.favorite,
+                                    size: 50,
+                                    color: snapshot.data!
+                                        ? ColorScheme.dark().secondaryVariant
+                                        : Theme.of(context).backgroundColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                  },
+                ),
+              ],
             ),
             Container(
               height: MediaQuery.of(context).size.height -
@@ -42,117 +110,33 @@ class _DetailViewState extends State<DetailView> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.blue, fontSize: 20),
-                      children: [
-                        TextSpan(
-                          text: "Name: ",
-                        ),
-                        TextSpan(
-                          text: widget.model.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextCharacteristicsWidget(
+                    title: "Name: ",
+                    body: widget.model.name ?? "",
                   ),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.blue, fontSize: 20),
-                      children: [
-                        TextSpan(
-                          text: "Gender: ",
-                        ),
-                        TextSpan(
-                          text: widget.model.gender,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextCharacteristicsWidget(
+                    title: "Gender: ",
+                    body: widget.model.gender ?? "",
                   ),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.blue, fontSize: 20),
-                      children: [
-                        TextSpan(
-                          text: "Espécie: ",
-                        ),
-                        TextSpan(
-                          text: widget.model.species,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextCharacteristicsWidget(
+                    title: "Species: ",
+                    body: widget.model.species ?? "",
                   ),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.blue, fontSize: 20),
-                      children: [
-                        TextSpan(
-                          text: "Status: ",
-                        ),
-                        TextSpan(
-                          text: widget.model.status,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextCharacteristicsWidget(
+                    title: "Status: ",
+                    body: widget.model.status ?? "",
                   ),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.blue, fontSize: 20),
-                      children: [
-                        TextSpan(
-                          text: "Type: ",
-                        ),
-                        TextSpan(
-                          text: widget.model.type,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextCharacteristicsWidget(
+                    title: "Type: ",
+                    body: widget.model.type ?? "",
                   ),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.blue, fontSize: 20),
-                      children: [
-                        TextSpan(
-                          text: "Location: ",
-                        ),
-                        TextSpan(
-                          text: widget.model.location!.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextCharacteristicsWidget(
+                    title: "Location: ",
+                    body: widget.model.location?.name ?? "",
                   ),
-                  RichText(
-                    text: TextSpan(
-                      style: TextStyle(color: Colors.blue, fontSize: 20),
-                      children: [
-                        TextSpan(
-                          text: "Origin: ",
-                        ),
-                        TextSpan(
-                          text: widget.model.origin!.name,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                      ],
-                    ),
+                  TextCharacteristicsWidget(
+                    title: "Origin: ",
+                    body: widget.model.origin?.name ?? "",
                   ),
                 ],
               ),
