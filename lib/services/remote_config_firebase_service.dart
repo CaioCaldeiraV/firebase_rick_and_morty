@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 
+import 'analytics_firebase_service.dart';
+
 const String _ShowMainBanner = "show_pop_up";
 final defaults = <String, dynamic>{
   "title": "",
@@ -29,8 +31,8 @@ class RemoteConfigService {
       await remoteConfig.setDefaults({_ShowMainBanner: json.encode(defaults)});
       await remoteConfig.fetchAndActivate();
     } catch (exception) {
-      print('Unable to fetch remote config. Cached or default values will be '
-          'used');
+      AnalyticsService.instance.logErrorRemoteConfig(
+          'Unable to fetch remote config. Cached or default values will be used');
     }
   }
 

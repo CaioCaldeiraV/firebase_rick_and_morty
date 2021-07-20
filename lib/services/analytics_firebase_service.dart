@@ -35,4 +35,9 @@ class AnalyticsService {
     await _firebaseAnalytics.logSelectContent(
         contentType: 'selected_character', itemId: character.id.toString());
   }
+
+  Future logErrorRemoteConfig(String msg) async {
+    await _firebaseAnalytics.logEvent(
+        name: "Error in Remote Config", parameters: {'description': msg});
+  }
 }

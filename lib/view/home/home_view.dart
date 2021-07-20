@@ -130,6 +130,10 @@ class _HomeViewState extends State<HomeView> {
             return Center(
               child: CircularProgressIndicator(),
             );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text("Algo de inesperado ocorreu!"),
+            );
           } else {
             AnalyticsService.instance.logPageCharacteres(snapshot.data!, page);
             var list = ListView.separated(
