@@ -1,7 +1,5 @@
 import 'dart:convert';
-
 import 'package:firebase_remote_config/firebase_remote_config.dart';
-
 import 'analytics_firebase_service.dart';
 
 const String _ShowMainBanner = "show_pop_up";

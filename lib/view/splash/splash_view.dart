@@ -1,5 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_rick_and_morty/services/analytics_firebase_service.dart';
+import 'package:firebase_rick_and_morty/services/cloud_messaging_firebase_service.dart';
 import 'package:firebase_rick_and_morty/view/home/home_view.dart';
 import 'package:flutter/material.dart';
 
@@ -19,6 +20,7 @@ class _SplashViewState extends State<SplashView> {
 
   Future<void> initializeFirebase() async {
     await Firebase.initializeApp();
+    PushNotificationConfigure().configure();
     AnalyticsService.instance.logOpenApp();
     Future.delayed(Duration(milliseconds: 1500)).then((_) {
       Navigator.pushReplacement(
